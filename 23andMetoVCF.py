@@ -17,16 +17,17 @@ outfile.write("""\
 ##FORMAT=<ID=GT,Number=1,Type=String,Description="Genotype">
 #CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO	FORMAT	GENOTYPE
 """)
+outfile.close()
 
-current_chromosome = ''
+current_chromosome = ""
 while line:
   rsid, chromosome, position, genotype = line.split()
 
   if (chromosome != current_chromosome):
     # 23andMe and UCSC naming convention diverges for mitochondrial DNA
     chromosome_file_suffix = chromosome
-    if (chromosome == 'MT'):
-      chromosome_file_suffix = 'M'
+    if (chromosome == "MT"):
+      chromosome_file_suffix = "M"
     # Load up the new chromosome
     current_chromosome_sequence = SeqIO.read(open("GRCh37/chr%s.fa" % chromosome_file_suffix, "rU"), "fasta")
     current_chromosome = chromosome
@@ -35,35 +36,66 @@ while line:
   reference_genotype = current_chromosome_sequence[int(position) - 1].upper() 
 
   # GT coding
-  # TODO(hammer): handle the X chromosome genotypes where I have a single base
-  # TODO(hammer): handle the case where I'm heterozygous with two bases different from the reference (comma-separated in ALT, higher numbers in GENOTYPE)
-  # TODO(hammer): handle "--" genotype call from 23andMe (use "./." in GENOTYPE)
-  allele1 = genotype[0].upper()
-  allele2 = genotype[1].upper()
+  # TODO(hammer): distinguish between X chromosome loci where there are two bases rather than a single base
+  alt = []
+  vcf_genotype = []
 
-  GT1 = 0
-  GT2 = 0
+  if (chromosome == "X"):
+    # Not sure how to handle yet; see http://www.biostars.org/p/62635/
+    line = infile.readline()
+    continue
+  elif (chromosome in ["Y", "MT"]):
+    if (genotype == "--"):
+      alt.append(".")
+      vcf_genotype.append(".")
+    else:
+      allele = genotype.upper()
+      if (reference_genotype != allele):
+        alt.append(allele)
+        vcf_genotype.append("1")
+      else:
+        alt.append(".")
+        vcf_genotype.append("0")
+  else:
+    if (genotype == "--"):
+      alt.append(".")
+      vcf_genotype.extend([".", "."])
+    else:
+      alleles = [genotype[0].upper(), genotype[1].upper()]
+      if (reference_genotype != alleles[0] and reference_genotype != alleles[1]):
+        if (alleles[0] == alleles[1]):
+          alt.append(alleles[0])
+          vcf_genotype.extend(["1", "1"])
+        else:
+          alt.extend(alleles)
+          vcf_genotype.extend(["1", "2"])
+      elif (reference_genotype == alleles[0] and reference_genotype == alleles[1]):
+        alt.append(".")
+        vcf_genotype.extend(["0", "0"])
+      elif (reference_genotype != alleles[0]):
+        alt.append(alleles[0])
+        vcf_genotype.extend(["1", "0"])
+      else:
+        alt.append(alleles[1])
+        vcf_genotype.extend(["0", "1"])
 
-  alt = "."
-  if (reference_genotype != allele1):
-    alt = allele1
-    GT1 = 1
-  if (reference_genotype != allele2):
-    alt = allele2
-    GT2 = 1
-
+  # Serialize new row in VCF file
   vcf_data = ["chr" + chromosome_file_suffix,
               position,
+
               rsid,
               reference_genotype,
-              alt,
+              ",".join(alt),
               ".",
               ".",
               ".",
               "GT",
-              "%d/%d" % (GT1, GT2),
+              "/".join(vcf_genotype),
               ]
+  # open and close file because things seem to be messed up if it's open too long
+  outfile = open("my_genome.vcf", "a")
   outfile.write("\t".join(vcf_data) + "\n")
+  outfile.close()
 
   line = infile.readline()
 
