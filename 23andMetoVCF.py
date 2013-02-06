@@ -1,7 +1,7 @@
 from Bio import SeqIO
 
 # Read a 23andMe file
-infile = open("genome_Jeff_Hammerbacher_Full_20130125202523.txt", "r")
+infile = open("genome_Halle_Tecco_Full_20130201203839.txt", "r")
 
 # Skip comments
 line = infile.readline()  
@@ -37,6 +37,7 @@ while line:
 
   # GT coding
   # TODO(hammer): distinguish between X chromosome loci where there are two bases rather than a single base
+  # cf. ftp://ftp.ncbi.nlm.nih.gov/genbank/genomes/Eukaryotes/vertebrates_mammals/Homo_sapiens/GRCh37.p10/par.txt
   alt = []
   vcf_genotype = []
 
