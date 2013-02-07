@@ -1,0 +1,83 @@
+{% extends "layout.html" %}
+{% block body %}
+<script type=text/javascript>
+  var b = new Browser({
+    chr:          '22',
+    viewStart:    30000000,
+    viewEnd:      30030000,
+    cookieKey:    'human',
+
+    coordSystem: {
+      speciesName: 'Human',
+      taxon: 9606,
+      auth: 'GRCh',
+      version: '37'
+    },
+
+    chains: {
+      hg18ToHg19: new Chainset('http://www.derkholm.net:8080/das/hg18ToHg19/', 'NCBI36', 'GRCh37',
+                               {
+                                  speciesName: 'Human',
+                                  taxon: 9606,
+                                  auth: 'NCBI',
+                                  version: 36
+                               })
+    },
+
+    sources:          [{name: 'Genome',
+                        uri:  'http://www.derkholm.net:8080/das/hg19comp/',
+                        desc: 'Human reference genome build GRCh37',
+                        tier_type: 'sequence',
+                        provides_entrypoints: true},
+                       {name: 'Genes',
+                        desc: 'Gene structures from Ensembl 59 (GENCODE 4)',
+                        uri: 'http://www.derkholm.net:8080/das/hsa_59_37d/',
+                        collapseSuperGroups: true,
+                        provides_karyotype: true,     
+                        provides_search: true},
+                       {name: 'Repeats',
+                        desc: 'Repeat annotation from Ensembl 59', 
+                        uri: 'http://www.derkholm.net:8080/das/hsa_59_37d/',
+                        stylesheet_uri: 'http://www.derkholm.net/dalliance-test/stylesheets/ens-repeats.xml'},
+                       {name: 'CpG',
+                        desc: 'CpG observed/expected ratio',
+                        uri: 'http://www.derkholm.net:8080/das/hg19comp/',
+                        stylesheet_uri: 'http://www.derkholm.net/dalliance-test/stylesheets/cpg.xml'}],
+
+    browserLinks: {
+      Ensembl: 'http://www.ensembl.org/Homo_sapiens/Location/View?r=${chr}:${start}-${end}',
+      UCSC: 'http://genome.ucsc.edu/cgi-bin/hgTracks?db=hg19&position=chr${chr}:${start}-${end}',
+      Sequence: 'http://www.derkholm.net:8080/das/hg19comp/sequence?segment=${chr}:${start},${end}'
+    },
+
+    searchEndpoint: new DASSource('http://www.derkholm.net:8080/das/hsa_59_37d/'),
+    karyotypeEndpoint: new DASSource('http://www.derkholm.net:8080/das/hsa_59_37d/'),
+    forceWidth: 800,
+    disablePoweredBy: true
+  });
+
+  $(function() {
+    $('a#setLocation').click(function() {
+      b.setLocation(parseInt($('input[name="min"]').val(), 10),
+                    parseInt($('input[name="max"]').val(), 10),
+                    $('input[name="chr"]').val());
+    });
+    $('a.variant').click(function() {
+      b.setLocation(parseInt($(this).attr("bp1"), 10),
+                    parseInt($(this).attr("bp2"), 10),
+                    $(this).attr("chr"));
+    });
+  });
+</script>
+<h1>Dalliance Example</h1>
+<div id='svgHolder'></div>
+<p>Chr: <input type=text size=5 name=chr>
+   Min: <input type=text size=5 name=min>
+   Max: <input type=text size=5 name=max>
+<p><a href=# id=setLocation>change location</a>
+{% for var in vars %}
+  <li><a href=# class='variant' chr='{{ var.CHR }}' bp1='{{ var.BP1 }}' bp2='{{ var.BP2 }}'>{{ var.ID }}</a>: Chromosome {{ var.CHR }}, from {{ var.BP1 }} to {{ var.BP2 }}</li>
+{% else %}
+  <li><em>No variants found.</em></li>
+{% endfor %}
+{% endblock %}

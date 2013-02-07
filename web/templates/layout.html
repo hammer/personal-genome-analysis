@@ -1,0 +1,30 @@
+<!doctype html>
+<title>Dalliance Example</title>
+<script type=text/javascript src="{{ url_for('static', filename='js/ext/jquery.js') }}"></script>
+<script language="javascript" src="{{ url_for('static', filename='js/ext/dalliance/spans.js') }}"></script>
+<script language="javascript" src="{{ url_for('static', filename='js/ext/dalliance/utils.js') }}"></script>
+<script language="javascript" src="{{ url_for('static', filename='js/ext/dalliance/das.js') }}"></script>
+<script language="javascript" src="{{ url_for('static', filename='js/ext/dalliance/browser.js') }}"></script>
+<script language="javascript" src="{{ url_for('static', filename='js/ext/dalliance/tier.js') }}"></script>
+<script language="javascript" src="{{ url_for('static', filename='js/ext/dalliance/sequence-tier.js') }}"></script>
+<script language="javascript" src="{{ url_for('static', filename='js/ext/dalliance/feature-tier.js') }}"></script>
+<script language="javascript" src="{{ url_for('static', filename='js/ext/dalliance/slider.js') }}"></script>
+<script language="javascript" src="{{ url_for('static', filename='js/ext/dalliance/domui.js') }}"></script>
+<script language="javascript" src="{{ url_for('static', filename='js/ext/dalliance/karyoscape.js') }}"></script>
+<script language="javascript" src="{{ url_for('static', filename='js/ext/dalliance/quant-config.js') }}"></script>
+<script language="javascript" src="{{ url_for('static', filename='js/ext/dalliance/track-adder.js') }}"></script>
+<script language="javascript" src="{{ url_for('static', filename='js/ext/dalliance/chainset.js') }}"></script>
+<script language="javascript" src="{{ url_for('static', filename='js/ext/dalliance/version.js') }}"></script>
+<script language="javascript" src="{{ url_for('static', filename='js/ext/dalliance/sha1.js') }}"></script>
+<script language="javascript" src="{{ url_for('static', filename='js/ext/dalliance/sample.js') }}"></script>
+<script language="javascript" src="{{ url_for('static', filename='js/ext/dalliance/kspace.js') }}"></script>
+<script language="javascript" src="{{ url_for('static', filename='js/ext/dalliance/bin.js') }}"></script>
+<script language="javascript" src="{{ url_for('static', filename='js/ext/dalliance/bigwig.js') }}"></script>
+<script language="javascript" src="{{ url_for('static', filename='js/ext/dalliance/bam.js') }}"></script>
+<script language="javascript" src="{{ url_for('static', filename='js/ext/dalliance/twoBit.js') }}"></script>
+<script language="javascript" src="{{ url_for('static', filename='js/ext/dalliance/json/json2.js') }}"></script>
+<script language="javascript" src="{{ url_for('static', filename='js/ext/dalliance/jszlib/js/inflate.js') }}"></script>
+<script type=text/javascript>
+  var $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+</script>
+{% block body %}{% endblock %}
