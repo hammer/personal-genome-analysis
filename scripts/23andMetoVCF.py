@@ -1,18 +1,23 @@
 from Bio import SeqIO
 
+# TODO(hammer): pick these up from the command line
+IFILE=
+OFILE=
+REFDIR=
+
 # Read a 23andMe file
-infile = open("genome_Halle_Tecco_Full_20130201203839.txt", "r")
+infile = open(IFILE, "r")
 
 # Skip comments
-line = infile.readline()  
+line = infile.readline()
 while (line.startswith('#')):
   line = infile.readline()
 
 # Write a VCF file
-outfile = open("my_genome.vcf", "w")
+outfile = open(OFILE, "w")
 outfile.write("""\
 ##fileformat=VCFv4.1
-##fileDate=20130131
+##fileDate=20130311
 ##source=23andMetoVCF.py
 ##FORMAT=<ID=GT,Number=1,Type=String,Description="Genotype">
 #CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO	FORMAT	GENOTYPE
@@ -29,11 +34,11 @@ while line:
     if (chromosome == "MT"):
       chromosome_file_suffix = "M"
     # Load up the new chromosome
-    current_chromosome_sequence = SeqIO.read(open("GRCh37/chr%s.fa" % chromosome_file_suffix, "rU"), "fasta")
+    current_chromosome_sequence = SeqIO.read(open(REFDIR + "/chr%s.fa" % chromosome_file_suffix, "rU"), "fasta")
     current_chromosome = chromosome
 
   # because python arrays are 0-indexed
-  reference_genotype = current_chromosome_sequence[int(position) - 1].upper() 
+  reference_genotype = current_chromosome_sequence[int(position) - 1].upper()
 
   # GT coding
   # TODO(hammer): distinguish between X chromosome loci where there are two bases rather than a single base
@@ -94,7 +99,7 @@ while line:
               "/".join(vcf_genotype),
               ]
   # open and close file because things seem to be messed up if it's open too long
-  outfile = open("my_genome.vcf", "a")
+  outfile = open(OFILE, "a")
   outfile.write("\t".join(vcf_data) + "\n")
   outfile.close()
 
