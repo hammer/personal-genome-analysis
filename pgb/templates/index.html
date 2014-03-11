@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+
+{% block body %}
+<h1>Dalliance Example</h1>
+<div id='svgHolder'></div>
+{% for var in vars %}
+  <li><a href=# class='variant' chr='{{ var.CHR }}' bp1='{{ var.BP1 }}' bp2='{{ var.BP2 }}'>{{ var.ID }}</a>: Chromosome {{ var.CHR }}, from {{ var.BP1 }} to {{ var.BP2 }}</li>
+{% else %}
+  <li><em>No variants found.</em></li>
+{% endfor %}
+{% endblock %}
+
+{% block js %}
+  <script src="static/js/dalliance-compiled.js"></script>
+  <script src="static/js/pgb.js"></script>
+{% endblock %}

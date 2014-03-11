@@ -1,3 +1,10 @@
+# Emacs
+*~
+
+# PLINK/SEQ
+.pseqversion
+
+# Python
 *.py[cod]
 
 # C extensions

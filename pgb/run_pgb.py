@@ -2,6 +2,7 @@ from flask import Flask, render_template
 import pyplinkseq
 
 DEBUG = True
+PLINKSEQ_PROJECT = "/Users/hammer/Dropbox/codebox/venv-pga/personal-genome-analysis/data/sxsw.pseq"
 
 app = Flask(__name__)
 app.config.from_object(__name__)
@@ -14,5 +15,5 @@ def index():
 
 
 if __name__ == '__main__':
-  pyplinkseq.set_project("/Users/hammer/Dropbox/codebox/personal-genome-analysis/personal-genome-analysis-skillshare.pseq")
+  pyplinkseq.set_project(PLINKSEQ_PROJECT)
   app.run()
